@@ -1,0 +1,97 @@
+package lesson2.music.app;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import lesson2.music.model.Album;
+import lesson2.music.model.Artist;
+import lesson2.music.model.Genre;
+import lesson2.music.model.Library;
+import lesson2.music.model.Media;
+import lesson2.music.model.Notification;
+import lesson2.music.model.Playlist;
+import lesson2.music.model.Podcast;
+import lesson2.music.model.PremiumUser;
+import lesson2.music.model.Review;
+import lesson2.music.model.Song;
+import lesson2.music.model.Subscription;
+import lesson2.music.model.User;
+import lesson2.music.service.MusicService;
+import lesson2.music.service.PaymentService;
+import lesson2.music.service.StreamingStatistics;
+
+/**
+ * Entry point of the Music Streaming Service application.
+ * Creates objects of all hierarchy classes and combines them into MusicService (root).
+ */
+public class AppRunner {
+
+    public static void main(String[] args) {
+
+        // ---------- Create all hierarchy classes ----------
+
+        Artist artist = new Artist("The Weeknd", "Canada", 2010);
+        Genre genre = new Genre("Pop", "Popular modern music genre");
+        genre.printGenreInfo();
+
+        Song song1 = new Song("Blinding Lights", 200, "The Weeknd", "After Hours", genre);
+        Song song2 = new Song("Starboy", 210, "The Weeknd", "Starboy", genre);
+
+        Media[] playlistItems = {song1, song2};
+        Playlist playlist = new Playlist("My Playlist", playlistItems);
+        System.out.println("Playlist duration: " + playlist.calculateTotalDuration() + " sec");
+
+        Podcast podcast1 = new Podcast("Tech Talks", 1800, "John Doe", 5);
+
+        Album album = new Album("After Hours", LocalDate.of(2020, 3, 20), artist);
+        album.addSong(song1);
+        album.addSong(song2);
+
+        Subscription premium = new Subscription("Premium", new BigDecimal("9.99"));
+        PremiumUser user = new PremiumUser("sergey", "sergey@mail.com", premium, 3);
+
+        Library library = new Library(user);
+        library.addMedia(song1);
+        library.addMedia(podcast1);
+        library.printLibrary();
+
+        Review review = new Review(user, song1, 5, "Amazing song!", LocalDateTime.now());
+        review.printReview();
+
+        Notification notification = new Notification(user, "New album released!", "INFO");
+        notification.send();
+
+        // ---------- Root object: MusicService fully populated with all domain objects ----------
+
+        Media[] catalog = {song1, song2, podcast1};
+        User[] users = {user};
+        MusicService musicService = new MusicService(catalog, users);
+        PaymentService paymentService = new PaymentService("Stripe");
+
+        musicService.streamMedia(user, song1);
+        user.downloadSong(song1);
+        paymentService.processPayment(premium.getMonthlyPrice());
+        System.out.println("Total streams: " + StreamingStatistics.getTotalStreams());
+
+        // ---------- Dynamic add (still only arrays) ----------
+
+        Subscription basic = new Subscription("Basic", new BigDecimal("4.99"));
+        User newUser = new User("alex", "alex@mail.com", basic);
+        musicService.addUser(newUser);
+
+        Song newSong = new Song("Save Your Tears", 210, "The Weeknd", "After Hours", genre);
+        musicService.addMedia(newSong);
+
+        System.out.println("Users in system:");
+        for (User u : musicService.getUsers()) {
+            System.out.println("- " + u.getUsername());
+        }
+        System.out.println("Media in catalog:");
+        for (Media m : musicService.getCatalog()) {
+            System.out.println("- " + m.getTitle());
+        }
+
+        album.printAlbumInfo();
+    }
+}

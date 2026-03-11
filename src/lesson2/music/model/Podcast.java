@@ -1,0 +1,42 @@
+package lesson2.music.model;
+
+/**
+ * Podcast is another type of Media
+ */
+public class Podcast extends Media {
+
+    // Host of the podcast
+    private String host;
+
+    // Episode number
+    private int episodeNumber;
+
+    /**
+     * Constructor for Podcast
+     */
+    public Podcast(String title, int duration, String host, int episodeNumber) {
+        super(title, duration);
+        this.host = host;
+        this.episodeNumber = episodeNumber;
+    }
+
+    // -------- Getters --------
+
+    public String getHost() {
+        return host;
+    }
+
+    public int getEpisodeNumber() {
+        return episodeNumber;
+    }
+
+    // -------- Setters ---------
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setEpisodeNumber(int episodeNumber) {
+        this.episodeNumber = episodeNumber;
+    }
+}
