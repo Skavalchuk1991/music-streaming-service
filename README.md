@@ -1,1 +1,3 @@
-# Music Streaming Service - Rebase Version 1
+# Music Streaming Service
+## Description
+Music streaming service built with Java
