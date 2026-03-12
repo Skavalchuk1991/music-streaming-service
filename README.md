@@ -1,3 +1,1 @@
-# Music Streaming Service
-## Description
-Music streaming service built with Java
+# Music Streaming Service - Version 2
