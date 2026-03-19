@@ -3,7 +3,7 @@ package lesson2.music.model;
 /**
  * Represents a playlist that contains media items
  */
-public class Playlist {
+public class Playlist implements Shareable {
 
     // Name of playlist
     private String name;
@@ -17,6 +17,18 @@ public class Playlist {
     public Playlist(String name, Media[] items) {
         this.name = name;
         this.items = items;
+    }
+
+    // -------- Shareable --------
+
+    @Override
+    public String getShareLink() {
+        return "https://music.app/playlists/" + name.toLowerCase().replace(" ", "-");
+    }
+
+    @Override
+    public void share(User recipient) {
+        System.out.println("Playlist '" + name + "' shared with " + recipient.getUsername());
     }
 
     /**

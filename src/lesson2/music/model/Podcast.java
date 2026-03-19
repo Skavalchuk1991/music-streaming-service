@@ -3,13 +3,17 @@ package lesson2.music.model;
 /**
  * Podcast is another type of Media
  */
-public class Podcast extends Media {
+public class Podcast extends Media implements Playable, Downloadable, Subscribable {
 
     // Host of the podcast
     private String host;
 
     // Episode number
     private int episodeNumber;
+
+    // -------- Downloadable --------
+
+    private boolean availableOffline = false;
 
     /**
      * Constructor for Podcast
@@ -18,6 +22,39 @@ public class Podcast extends Media {
         super(id, title, duration);
         this.host = host;
         this.episodeNumber = episodeNumber;
+    }
+
+    @Override
+    public void play() {
+        super.play();
+    }
+
+    @Override
+    public int getDuration() {
+        return super.getDuration();
+    }
+
+    @Override
+    public void download() {
+        this.availableOffline = true;
+        System.out.println("Podcast '" + title + "' downloaded for offline use");
+    }
+
+    @Override
+    public boolean isAvailableOffline() {
+        return availableOffline;
+    }
+
+    // -------- Subscribable --------
+
+    @Override
+    public boolean hasAccess(User user) {
+        return user.getSubscription() != null;
+    }
+
+    @Override
+    public String getRequiredSubscriptionType() {
+        return "Basic";
     }
 
     @Override

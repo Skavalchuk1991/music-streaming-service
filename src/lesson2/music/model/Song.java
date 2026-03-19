@@ -5,7 +5,7 @@ import java.util.Objects;
 /**
  * Song is a specific type of Media
  */
-public class Song extends Media implements Downloadable, Shareable, Subscribable {
+public class Song extends Media implements Playable, Downloadable, Shareable, Subscribable {
 
     // Artist of the song
     private String artist;

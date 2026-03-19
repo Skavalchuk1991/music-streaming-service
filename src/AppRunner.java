@@ -152,6 +152,35 @@ public class AppRunner {
         System.out.println("\n-- Static variable and method --");
         System.out.println("Total registered users: " + MusicService.getTotalRegisteredUsers());
 
+        // --- Fix: each interface implemented by 2 explicit classes ---
+
+        // Playable: Song vs Podcast (both explicit)
+        System.out.println("\n-- Playable: Song vs Podcast --");
+        musicService.playItem(song1);
+        musicService.playItem(podcast1);
+
+        // Downloadable: Song vs Podcast
+        System.out.println("\n-- Downloadable: Song vs Podcast --");
+        musicService.downloadItem(song1);
+        musicService.downloadItem(podcast1);
+
+        // Shareable: Song vs Playlist
+        System.out.println("\n-- Shareable: Song vs Playlist --");
+        musicService.shareItem(song1, newUser);
+        musicService.shareItem(playlist, newUser);
+
+        // Reviewable: Album vs Artist
+        System.out.println("\n-- Reviewable: Album vs Artist --");
+        Review artistReview = new Review(user, song1, 5, "Best artist!", LocalDateTime.now());
+        artist.addReview(artistReview);
+        musicService.printAverageRating(album);
+        musicService.printAverageRating(artist);
+
+        // Subscribable: Song vs Podcast
+        System.out.println("\n-- Subscribable: Song vs Podcast --");
+        System.out.println("Song access: " + song1.hasAccess(user));
+        System.out.println("Podcast access: " + podcast1.hasAccess(user));
+
         System.out.println("Users in system:");
         for (User u : musicService.getUsers()) {
             System.out.println("- " + u.getUsername());

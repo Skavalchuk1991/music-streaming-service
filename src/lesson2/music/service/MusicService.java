@@ -1,8 +1,10 @@
 package lesson2.music.service;
 
 import lesson2.music.model.Artist;
+import lesson2.music.model.Downloadable;
 import lesson2.music.model.Media;
 import lesson2.music.model.Playable;
+import lesson2.music.model.Reviewable;
 import lesson2.music.model.Shareable;
 import lesson2.music.model.User;
 
@@ -106,6 +108,23 @@ public class MusicService {
     public void shareItem(Shareable item, User recipient) {
         System.out.println("Share link: " + item.getShareLink());
         item.share(recipient);
+    }
+
+    /**
+     * Polymorphism via Downloadable interface.
+     * Works with any class that explicitly implements Downloadable.
+     */
+    public void downloadItem(Downloadable item) {
+        item.download();
+        System.out.println("Available offline: " + item.isAvailableOffline());
+    }
+
+    /**
+     * Polymorphism via Reviewable interface.
+     * Works with any class that explicitly implements Reviewable.
+     */
+    public void printAverageRating(Reviewable item) {
+        System.out.println("Average rating: " + item.getAverageRating());
     }
 
     public void setArtists(Artist[] artists) {
