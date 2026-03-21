@@ -1,5 +1,9 @@
+package lesson2.music.app;
+
+import lesson2.music.exception.*;
 import lesson2.music.model.AppConstants;
 import lesson2.music.model.*;
+import lesson2.music.service.AudioStream;
 import lesson2.music.service.MusicService;
 import lesson2.music.service.PaymentService;
 import lesson2.music.service.StreamingStatistics;
@@ -189,5 +193,78 @@ public class AppRunner {
         for (Media m : musicService.getCatalog()) {
             System.out.println("- " + m.getTitle());
         }
+
+        // ============ HOMEWORK 5: Exceptions Demo ============
+
+        System.out.println("\n===== HOMEWORK 5: EXCEPTIONS =====\n");
+
+        // --- 1. Checked exception: MediaLoadException (handled with try-catch) ---
+        System.out.println("--- 1. Checked Exception: MediaLoadException ---");
+        try {
+            musicService.loadMediaFromSource("corrupted_file.mp3");
+        } catch (MediaLoadException e) {
+            System.out.println("Caught checked exception: " + e.getMessage());
+        }
+
+        // Also handle with try-catch using valid source
+        try {
+            musicService.loadMediaFromSource("valid_source.mp3");
+        } catch (MediaLoadException e) {
+            System.out.println("Caught checked exception: " + e.getMessage());
+        }
+
+        user.setDownloadLimit(3); // reset for clean demo
+        // --- 2. Unchecked: DownloadLimitExceededException ---
+        System.out.println("\n--- 2. Unchecked: DownloadLimitExceededException ---");
+        // Note: 'user' should be PremiumUser — use the existing PremiumUser variable from earlier code
+        try {
+            // Attempt downloads exceeding the limit (assuming downloadLimit was set during construction)
+            for (int i = 0; i < 15; i++) {
+                user.downloadSong(song1);
+            }
+        } catch (DownloadLimitExceededException e) {
+            System.out.println("Caught: " + e.getMessage());
+        }
+
+        // --- 3. Unchecked: PlaylistFullException ---
+        System.out.println("\n--- 3. Unchecked: PlaylistFullException ---");
+        try {
+            // Create a playlist and fill it to MAX_PLAYLIST_SIZE using addItem, then add one more
+            Playlist fullPlaylist = new Playlist("Full Playlist", new Media[0]);
+            for (int i = 0; i < AppConstants.MAX_PLAYLIST_SIZE; i++) {
+                fullPlaylist.addItem(song1);
+            }
+            // This 101st add should throw PlaylistFullException
+            fullPlaylist.addItem(song1);
+        } catch (PlaylistFullException e) {
+            System.out.println("Caught: " + e.getMessage());
+        }
+
+        // --- 4. Unchecked: UserNotFoundException ---
+        System.out.println("\n--- 4. Unchecked: UserNotFoundException ---");
+        try {
+            musicService.streamMedia(null, song1);
+        } catch (UserNotFoundException e) {
+            System.out.println("Caught: " + e.getMessage());
+        }
+
+        // --- 5. Unchecked: InvalidSubscriptionException ---
+        System.out.println("\n--- 5. Unchecked: InvalidSubscriptionException ---");
+        try {
+            User noSubUser = new User(99, "ghost", "ghost@mail.com", null);
+            musicService.streamMedia(noSubUser, song1);
+        } catch (InvalidSubscriptionException e) {
+            System.out.println("Caught: " + e.getMessage());
+        }
+
+        // --- 6. AutoCloseable + try-with-resources ---
+        System.out.println("\n--- 6. Try-with-resources: AudioStream ---");
+        try (AudioStream audioStream = new AudioStream(song1)) {
+            audioStream.stream();
+            System.out.println("Stream is open: " + audioStream.isOpen());
+        } // audioStream.close() is called automatically here
+        System.out.println("After try-with-resources block — stream was auto-closed");
+
+        System.out.println("\n===== END OF HOMEWORK 5 =====");
     }
 }

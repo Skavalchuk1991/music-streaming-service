@@ -1,5 +1,7 @@
 package lesson2.music.model;
 
+import lesson2.music.exception.DownloadLimitExceededException;
+
 /**
  * PremiumUser is a special type of User
  * It extends User and adds extra functionality
@@ -26,7 +28,7 @@ public class PremiumUser extends User {
             downloadLimit--;
             System.out.println("Downloaded: " + song.getTitle());
         } else {
-            System.out.println("Download limit reached");
+            throw new DownloadLimitExceededException("Download limit reached for user: " + getUsername());
         }
     }
 

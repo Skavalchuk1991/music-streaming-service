@@ -1,5 +1,8 @@
 package lesson2.music.service;
 
+import lesson2.music.exception.InvalidSubscriptionException;
+import lesson2.music.exception.MediaLoadException;
+import lesson2.music.exception.UserNotFoundException;
 import lesson2.music.model.Artist;
 import lesson2.music.model.Downloadable;
 import lesson2.music.model.Media;
@@ -54,6 +57,12 @@ public class MusicService {
      * Streams media for a user
      */
     public void streamMedia(User user, Media media) {
+        if (user == null) {
+            throw new UserNotFoundException("User not found: cannot stream media");
+        }
+        if (user.getSubscription() == null) {
+            throw new InvalidSubscriptionException("User '" + user.getUsername() + "' has no valid subscription");
+        }
 
         System.out.println(user.getUsername() + " is streaming: " + media.getTitle());
 
@@ -62,6 +71,22 @@ public class MusicService {
 
         // Increase global streaming counter
         StreamingStatistics.increaseCounter();
+    }
+
+    /**
+     * Simulates loading media from an external source.
+     * Throws checked MediaLoadException if media cannot be loaded.
+     */
+    public Media loadMediaFromSource(String source) throws MediaLoadException {
+        if (source == null || source.isEmpty()) {
+            throw new MediaLoadException("Cannot load media: source is null or empty");
+        }
+        // Simulate a loading failure for demonstration
+        if (source.contains("corrupted")) {
+            throw new MediaLoadException("Cannot load media: source '" + source + "' is corrupted");
+        }
+        System.out.println("Media loaded successfully from: " + source);
+        return null; // In real code, would return actual media
     }
 
     public Artist[] getArtists() {

@@ -56,7 +56,8 @@ public class User extends BaseEntity {
      * Returns a formatted display name for the user.
      */
     public final String getDisplayName() {
-        return "[" + subscription.getType() + "] " + username;
+        String tier = (subscription != null) ? subscription.getType() : "No Subscription";
+        return "[" + tier + "] " + username;
     }
 
     public Subscription getSubscription() {

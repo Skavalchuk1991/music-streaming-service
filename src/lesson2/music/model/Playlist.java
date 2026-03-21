@@ -1,5 +1,7 @@
 package lesson2.music.model;
 
+import lesson2.music.exception.PlaylistFullException;
+
 /**
  * Represents a playlist that contains media items
  */
@@ -17,6 +19,16 @@ public class Playlist implements Shareable {
     public Playlist(String name, Media[] items) {
         this.name = name;
         this.items = items;
+    }
+
+    public void addItem(Media media) {
+        if (items.length >= AppConstants.MAX_PLAYLIST_SIZE) {
+            throw new PlaylistFullException("Playlist '" + name + "' is full. Max size: " + AppConstants.MAX_PLAYLIST_SIZE);
+        }
+        Media[] newItems = new Media[items.length + 1];
+        System.arraycopy(items, 0, newItems, 0, items.length);
+        newItems[items.length] = media;
+        items = newItems;
     }
 
     // -------- Shareable --------
