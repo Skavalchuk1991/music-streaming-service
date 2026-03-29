@@ -16,6 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Entry point of the Music Streaming Service application.
@@ -406,5 +411,102 @@ public class AppRunner {
         }
 
         System.out.println("\n===== END OF HOMEWORK 6 =====");
+
+        // ============ HOMEWORK 7: Lambda, Enum, Record Demo ============
+
+        System.out.println("\n===== HOMEWORK 7: LAMBDA, ENUM, RECORD =====\n");
+
+        // --- 1. Lambdas from java.util.function (5 different) ---
+        System.out.println("--- 1. Lambdas from java.util.function ---");
+
+        // Predicate<Media> — filter songs longer than 200 sec
+        Predicate<Media> longMedia = media -> media.getDuration() > 200;
+        List<Media> longSongs = musicService.filterCatalog(longMedia);
+        System.out.println("Media longer than 200s: " + longSongs.size());
+
+        // Consumer<Media> — print each media title
+        Consumer<Media> printTitle = media -> System.out.println("  >> " + media.getTitle());
+        System.out.println("All catalog:");
+        musicService.forEachMedia(printTitle);
+
+        // Function<Media, String> — extract titles
+        Function<Media, String> toTitle = media -> media.getTitle().toUpperCase();
+        List<String> titles = musicService.mapCatalog(toTitle);
+        System.out.println("Uppercase titles: " + titles);
+
+        // Supplier<Media> — default song when not found
+        Supplier<Media> defaultSong = () -> new Song(0, "Unknown", 0, "Unknown", "Unknown", genre);
+        Media found = musicService.getOrDefault(999, defaultSong);
+        System.out.println("Get or default (id=999): " + found.getTitle());
+
+        // BiFunction<User, Media, String> — create a listening message
+        BiFunction<User, Media, String> listenMessage = (u, m) ->
+                u.getUsername() + " just listened to '" + m.getTitle() + "'";
+        String msg = musicService.processUserMedia(user, song1, listenMessage);
+        System.out.println("BiFunction result: " + msg);
+
+        // --- 2. Custom functional interfaces with lambdas ---
+        System.out.println("\n--- 2. Custom functional interfaces ---");
+
+        // MediaFilter<Song> — filter songs by artist
+        MediaFilter<Song> weekndFilter = s -> s.getArtist().equals("The Weeknd");
+        System.out.println("Is song1 by The Weeknd? " + weekndFilter.test(song1));
+
+        // MediaTransformer<Song, String> — transform song to display string
+        MediaTransformer<Song, String> songFormatter = s ->
+                s.getTitle() + " by " + s.getArtist() + " (" + s.getDuration() + "s)";
+        System.out.println("Formatted: " + songFormatter.transform(song1));
+
+        // MediaAction<Media> — action on media
+        MediaAction<Media> playAction = m -> System.out.println("Custom action: Playing " + m.getTitle());
+        playAction.execute(song1);
+        playAction.execute(podcast1);
+
+        // --- 3. Complex Enums ---
+        System.out.println("\n--- 3. Complex Enums ---");
+
+        // SubscriptionTier
+        System.out.println("Premium tier: " + SubscriptionTier.PREMIUM.describe());
+        System.out.println("Free offline access: " + SubscriptionTier.FREE.hasOfflineAccess());
+        for (SubscriptionTier tier : SubscriptionTier.values()) {
+            System.out.println("  " + tier.name() + " — $" + tier.getMonthlyPrice());
+        }
+
+        // MediaType
+        System.out.println("\nMediaType SONG: " + MediaType.SONG.getDescription());
+        System.out.println("Is 5 min valid for SONG? " + MediaType.SONG.isValidDuration(5));
+        System.out.println("Is 5 min valid for AUDIOBOOK? " + MediaType.AUDIOBOOK.isValidDuration(5));
+
+        // PlaybackSpeed
+        int original = song1.getDuration();
+        System.out.println("\nOriginal duration: " + original + "s");
+        System.out.println("At 2x speed: " + PlaybackSpeed.DOUBLE.adjustDuration(original) + "s");
+        System.out.println("At 0.5x speed: " + PlaybackSpeed.HALF.adjustDuration(original) + "s");
+
+        // NotificationType
+        System.out.println("\n" + NotificationType.NEW_RELEASE.format("The Weeknd dropped a new album!"));
+        System.out.println("Is SYSTEM high priority? " + NotificationType.SYSTEM.isHighPriority());
+
+        // RepeatMode — cycle through modes
+        RepeatMode mode = RepeatMode.OFF;
+        System.out.println("\nRepeat mode cycle:");
+        for (int i = 0; i < 5; i++) {
+            System.out.println("  " + mode.name() + " → " + mode.getDescription());
+            mode = mode.next();
+        }
+
+        // --- 4. Record ---
+        System.out.println("\n--- 4. Record ---");
+        TrackInfo track = new TrackInfo("Blinding Lights", "The Weeknd", 200, MediaType.SONG);
+        System.out.println("TrackInfo: " + track);
+        System.out.println("Title: " + track.title());
+        System.out.println("Duration: " + track.formattedDuration());
+        System.out.println("Type: " + track.type().getDescription());
+
+        // Record equals — auto-generated
+        TrackInfo track2 = new TrackInfo("Blinding Lights", "The Weeknd", 200, MediaType.SONG);
+        System.out.println("track.equals(track2): " + track.equals(track2));
+
+        System.out.println("\n===== END OF HOMEWORK 7 =====");
     }
 }

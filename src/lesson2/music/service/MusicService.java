@@ -18,6 +18,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Core service of the music streaming system
@@ -219,5 +224,57 @@ public class MusicService {
      */
     public void addMedia(Media newMedia) {
         catalog.add(newMedia);
+    }
+
+    /**
+     * Lambda with Predicate: filters catalog by condition.
+     */
+    public List<Media> filterCatalog(Predicate<Media> condition) {
+        List<Media> result = new ArrayList<>();
+        for (Media m : catalog) {
+            if (condition.test(m)) {
+                result.add(m);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Lambda with Consumer: applies an action to each media in catalog.
+     */
+    public void forEachMedia(Consumer<Media> action) {
+        for (Media m : catalog) {
+            action.accept(m);
+        }
+    }
+
+    /**
+     * Lambda with Function: transforms each media into something else.
+     */
+    public <R> List<R> mapCatalog(Function<Media, R> mapper) {
+        List<R> result = new ArrayList<>();
+        for (Media m : catalog) {
+            result.add(mapper.apply(m));
+        }
+        return result;
+    }
+
+    /**
+     * Lambda with Supplier: provides a default media when needed.
+     */
+    public Media getOrDefault(int id, Supplier<Media> defaultSupplier) {
+        for (Media m : catalog) {
+            if (m.getId() == id) {
+                return m;
+            }
+        }
+        return defaultSupplier.get();
+    }
+
+    /**
+     * Lambda with BiFunction: combines user and media into a result.
+     */
+    public <R> R processUserMedia(User user, Media media, BiFunction<User, Media, R> processor) {
+        return processor.apply(user, media);
     }
 }
