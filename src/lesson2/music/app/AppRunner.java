@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -444,6 +445,17 @@ public class AppRunner {
                 u.getUsername() + " just listened to '" + m.getTitle() + "'";
         String msg = musicService.processUserMedia(user, song1, listenMessage);
         System.out.println("BiFunction result: " + msg);
+
+        // Runnable — schedule a background task (no input, no output)
+        Runnable cacheCleanup = () -> System.out.println("Cache cleanup task executed");
+        System.out.println("Running scheduled task:");
+        cacheCleanup.run();
+
+        // BiConsumer<User, Media> — perform action with two inputs, no return
+        BiConsumer<User, Media> logListening = (u, m) ->
+                System.out.println("LOG: " + u.getUsername() + " listened to " + m.getTitle());
+        logListening.accept(user, song1);
+        logListening.accept(user, podcast1);
 
         // --- 2. Custom functional interfaces with lambdas ---
         System.out.println("\n--- 2. Custom functional interfaces ---");
