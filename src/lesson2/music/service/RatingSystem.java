@@ -18,12 +18,10 @@ public class RatingSystem<T> {
     }
 
     public double getAverageRating() {
-        if (ratings.isEmpty()) return 0.0;
-        int total = 0;
-        for (int r : ratings) {
-            total += r;
-        }
-        return (double) total / ratings.size();
+        return ratings.stream()
+                .mapToInt(Integer::intValue)
+                .average()
+                .orElse(0.0);
     }
 
     public List<T> getItems() {

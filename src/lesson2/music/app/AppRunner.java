@@ -8,6 +8,7 @@ import lesson2.music.service.MusicService;
 import lesson2.music.service.PaymentService;
 import lesson2.music.service.RatingSystem;
 import lesson2.music.service.StreamingStatistics;
+import lesson2.music.reflection.ReflectionDemo;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -441,8 +442,8 @@ public class AppRunner {
         System.out.println("Get or default (id=999): " + found.getTitle());
 
         // BiFunction<User, Media, String> — create a listening message
-        BiFunction<User, Media, String> listenMessage = (user, media) ->
-                user.getUsername() + " just listened to '" + media.getTitle() + "'";
+        BiFunction<User, Media, String> listenMessage = (listeningUser, media) ->
+                listeningUser.getUsername() + " just listened to '" + media.getTitle() + "'";
         String msg = musicService.processUserMedia(user, song1, listenMessage);
         System.out.println("BiFunction result: " + msg);
 
@@ -452,8 +453,8 @@ public class AppRunner {
         cacheCleanup.run();
 
         // BiConsumer<User, Media> — perform action with two inputs, no return
-        BiConsumer<User, Media> logListening = (user, media) ->
-                System.out.println("LOG: " + user.getUsername() + " listened to " + media.getTitle());
+        BiConsumer<User, Media> logListening = (listeningUser, media) ->
+                System.out.println("LOG: " + listeningUser.getUsername() + " listened to " + media.getTitle());
         logListening.accept(user, song1);
         logListening.accept(user, podcast1);
 
@@ -520,5 +521,20 @@ public class AppRunner {
         System.out.println("track.equals(track2): " + track.equals(track2));
 
         System.out.println("\n===== END OF HOMEWORK 7 =====");
+
+        // ============ HOMEWORK 8: Streams, Reflection, Annotations ============
+
+        System.out.println("\n===== HOMEWORK 8: STREAMS, REFLECTION, ANNOTATIONS =====\n");
+
+        // --- 1. Stream operations demo ---
+        System.out.println("--- Streams ---");
+        System.out.println("Media longer than 200s: " + musicService.countMediaLongerThan(200));
+        System.out.println("Sorted titles: " + musicService.getSortedTitles());
+        System.out.println("Total catalog duration: " + musicService.getTotalCatalogDuration() + "s");
+
+        // --- 2. Reflection + Annotation demo ---
+        ReflectionDemo.run();
+
+        System.out.println("\n===== END OF HOMEWORK 8 =====");
     }
 }

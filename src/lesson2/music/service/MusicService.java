@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * Core service of the music streaming system
@@ -230,45 +231,66 @@ public class MusicService {
      * Lambda with Predicate: filters catalog by condition.
      */
     public List<Media> filterCatalog(Predicate<Media> condition) {
-        List<Media> result = new ArrayList<>();
-        for (Media m : catalog) {
-            if (condition.test(m)) {
-                result.add(m);
-            }
-        }
-        return result;
+        return catalog.stream()
+                .filter(condition)
+                .collect(Collectors.toList());
     }
 
     /**
      * Lambda with Consumer: applies an action to each media in catalog.
      */
     public void forEachMedia(Consumer<Media> action) {
-        for (Media m : catalog) {
-            action.accept(m);
-        }
+        catalog.stream().forEach(action);
     }
 
     /**
      * Lambda with Function: transforms each media into something else.
      */
     public <R> List<R> mapCatalog(Function<Media, R> mapper) {
-        List<R> result = new ArrayList<>();
-        for (Media m : catalog) {
-            result.add(mapper.apply(m));
-        }
-        return result;
+        return catalog.stream()
+                .map(mapper)
+                .collect(Collectors.toList());
     }
 
     /**
      * Lambda with Supplier: provides a default media when needed.
      */
     public Media getOrDefault(int id, Supplier<Media> defaultSupplier) {
-        for (Media m : catalog) {
-            if (m.getId() == id) {
-                return m;
-            }
-        }
-        return defaultSupplier.get();
+        return catalog.stream()
+                .filter(media -> media.getId() == id)
+                .findFirst()
+                .orElseGet(defaultSupplier);
+    }
+
+    /**
+     * Stream: count media longer than given duration.
+     * Uses filter + count (terminal).
+     */
+    public long countMediaLongerThan(int seconds) {
+        return catalog.stream()
+                .filter(media -> media.getDuration() > seconds)
+                .count();
+    }
+
+    /**
+     * Stream: get sorted catalog titles.
+     * Uses map + sorted + collect (non-terminal + terminal).
+     */
+    public List<String> getSortedTitles() {
+        return catalog.stream()
+                .map(Media::getTitle)
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Stream: get total duration of all media.
+     * Uses mapToInt + sum (terminal).
+     */
+    public int getTotalCatalogDuration() {
+        return catalog.stream()
+                .mapToInt(Media::getDuration)
+                .sum();
     }
 
     /**

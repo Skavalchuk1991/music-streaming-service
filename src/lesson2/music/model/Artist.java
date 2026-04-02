@@ -43,12 +43,10 @@ public class Artist implements Reviewable {
 
     @Override
     public double getAverageRating() {
-        if (reviews.isEmpty()) return 0.0;
-        int total = 0;
-        for (Review r : reviews) {
-            total += r.getRating();
-        }
-        return (double) total / reviews.size();
+        return reviews.stream()
+                .mapToInt(Review::getRating)
+                .average()
+                .orElse(0.0);
     }
 
     public List<Review> getReviews() {

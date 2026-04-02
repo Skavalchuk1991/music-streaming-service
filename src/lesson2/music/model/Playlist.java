@@ -47,13 +47,9 @@ public class Playlist implements Shareable {
      * Calculates total duration of all media in playlist
      */
     public int calculateTotalDuration() {
-        int total = 0;
-
-        for (Media media : items) {
-            total += media.getDuration();
-        }
-
-        return total;
+        return items.stream()
+                .mapToInt(Media::getDuration)
+                .sum();
     }
 
     // -------- Getters --------

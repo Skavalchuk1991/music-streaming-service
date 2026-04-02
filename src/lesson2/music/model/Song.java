@@ -1,5 +1,7 @@
 package lesson2.music.model;
 
+import lesson2.music.reflection.JsonField;
+
 import java.util.Objects;
 
 /**
@@ -8,14 +10,17 @@ import java.util.Objects;
 public class Song extends Media implements Playable, Downloadable, Shareable, Subscribable {
 
     // Artist of the song
+    @JsonField(name = "artist_name")
     private String artist;
 
     // Album name
+    @JsonField(name = "album_name")
     private String album;
 
     // Genre of the song (links Song to Genre in hierarchy)
     private Genre genre;
 
+    @JsonField
     private boolean availableOffline = false;
 
     /**
