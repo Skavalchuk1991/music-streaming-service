@@ -241,7 +241,7 @@ public class MusicService {
      * Lambda with Consumer: applies an action to each media in catalog.
      */
     public void forEachMedia(Consumer<Media> action) {
-        catalog.stream().forEach(action);
+        catalog.forEach(action);
     }
 
     /**
